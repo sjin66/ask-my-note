@@ -5,9 +5,9 @@ import { Separator } from "@/components/ui/separator";
 
 export function Sidebar() {
   return (
-    <aside className="w-60 shrink-0 border-r bg-muted/30 flex flex-col">
+    <aside className="w-60 shrink-0 border-r border-border bg-sidebar flex flex-col">
       <div className="p-3">
-        <Button variant="outline" size="sm" className="w-full justify-start gap-2">
+        <Button variant="outline" size="sm" className="w-full justify-start gap-2 text-sm">
           <Plus className="h-4 w-4" />
           New Note
         </Button>
