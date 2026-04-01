@@ -1,35 +1,41 @@
-import { useAppStore } from "../../stores/appStore";
+import { Settings } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useAppStore } from "@/stores/appStore";
 
 export function TopBar() {
   const { activeView, setActiveView } = useAppStore();
 
   return (
-    <header className="flex items-center justify-between px-4 h-11 border-b border-gray-200 bg-white shrink-0">
-      <div className="flex gap-1">
-        <button
+    <header className="flex items-center justify-between px-3 h-11 border-b bg-background shrink-0">
+      <div className="flex items-center gap-1">
+        <Button
+          variant={activeView === "notes" ? "secondary" : "ghost"}
+          size="sm"
           onClick={() => setActiveView("notes")}
-          className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
-            activeView === "notes"
-              ? "bg-gray-100 text-gray-900"
-              : "text-gray-500 hover:text-gray-700"
-          }`}
         >
           Notes
-        </button>
-        <button
+        </Button>
+        <Button
+          variant={activeView === "chat" ? "secondary" : "ghost"}
+          size="sm"
           onClick={() => setActiveView("chat")}
-          className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
-            activeView === "chat"
-              ? "bg-gray-100 text-gray-900"
-              : "text-gray-500 hover:text-gray-700"
-          }`}
         >
           Chat
-        </button>
+        </Button>
       </div>
-      <button className="text-gray-400 hover:text-gray-600 transition-colors text-lg leading-none">
-        ⚙
-      </button>
+
+      <Separator orientation="vertical" className="h-5" />
+
+      <Tooltip>
+        <TooltipTrigger>
+          <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Settings className="h-4 w-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>Settings</TooltipContent>
+      </Tooltip>
     </header>
   );
 }

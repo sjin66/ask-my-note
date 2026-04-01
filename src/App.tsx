@@ -1,7 +1,7 @@
 import "./App.css";
-import { Sidebar } from "./components/layout/Sidebar";
-import { TopBar } from "./components/layout/TopBar";
-import { useAppStore } from "./stores/appStore";
+import { Sidebar } from "@/components/layout/Sidebar";
+import { TopBar } from "@/components/layout/TopBar";
+import { useAppStore } from "@/stores/appStore";
 
 function App() {
   const activeView = useAppStore((s) => s.activeView);

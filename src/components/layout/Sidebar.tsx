@@ -1,20 +1,28 @@
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+
 export function Sidebar() {
   return (
-    <aside className="w-60 shrink-0 border-r border-gray-200 flex flex-col bg-gray-50">
-      <div className="p-3 border-b border-gray-200">
-        <button className="w-full text-left px-3 py-2 rounded text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors">
-          + New Note
-        </button>
+    <aside className="w-60 shrink-0 border-r bg-muted/30 flex flex-col">
+      <div className="p-3">
+        <Button variant="outline" size="sm" className="w-full justify-start gap-2">
+          <Plus className="h-4 w-4" />
+          New Note
+        </Button>
       </div>
-      <div className="p-3 border-b border-gray-200">
-        <input
-          type="text"
-          placeholder="Search notes..."
-          className="w-full px-3 py-1.5 text-sm bg-white border border-gray-200 rounded outline-none focus:border-gray-400 transition-colors"
-        />
+
+      <Separator />
+
+      <div className="p-3">
+        <Input placeholder="Search notes..." className="h-8 text-sm" />
       </div>
+
+      <Separator />
+
       <div className="flex-1 overflow-y-auto p-2">
-        <p className="text-xs text-gray-400 text-center mt-8 px-4">
+        <p className="text-xs text-muted-foreground text-center mt-8 px-4">
           No notes yet. Create your first note to get started.
         </p>
       </div>
