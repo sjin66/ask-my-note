@@ -31,4 +31,5 @@ uuid = { version = "1", features = ["v4"] }
 chrono = { version = "0.4", features = ["serde"] }
 tiktoken-rs = "0.6"
 anyhow = "1"
+sqlite-vec = "0.1"
 

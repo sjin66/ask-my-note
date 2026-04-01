@@ -1,11 +1,24 @@
+pub mod chunks;
 pub mod notes;
 
-use rusqlite::Connection;
-use std::sync::Mutex;
+use rusqlite::{Connection, ffi::sqlite3_auto_extension};
+use std::sync::{Arc, Mutex, Once};
 
-pub struct DbConnection(pub Mutex<Connection>);
+#[derive(Clone)]
+pub struct DbConnection(pub Arc<Mutex<Connection>>);
+
+static INIT_VEC: Once = Once::new();
 
 pub fn init_db(app_dir: &std::path::Path) -> Result<DbConnection, rusqlite::Error> {
+    // Register sqlite-vec as auto extension (once, before any connection)
+    INIT_VEC.call_once(|| {
+        unsafe {
+            sqlite3_auto_extension(Some(std::mem::transmute(
+                sqlite_vec::sqlite3_vec_init as *const (),
+            )));
+        }
+    });
+
     std::fs::create_dir_all(app_dir).ok();
     let db_path = app_dir.join("notes.db");
     let conn = Connection::open(db_path)?;
@@ -14,7 +27,17 @@ pub fn init_db(app_dir: &std::path::Path) -> Result<DbConnection, rusqlite::Erro
 
     run_migrations(&conn)?;
 
-    Ok(DbConnection(Mutex::new(conn)))
+    // Create vec virtual table (idempotent — CREATE IF NOT EXISTS not supported by vec0)
+    let vec_exists: bool = conn.query_row(
+        "SELECT COUNT(*) > 0 FROM sqlite_master WHERE type='table' AND name='vec_chunks'",
+        [],
+        |row| row.get(0),
+    )?;
+    if !vec_exists {
+        conn.execute_batch("CREATE VIRTUAL TABLE vec_chunks USING vec0(embedding float[1536]);")?;
+    }
+
+    Ok(DbConnection(Arc::new(Mutex::new(conn))))
 }
 
 fn run_migrations(conn: &Connection) -> Result<(), rusqlite::Error> {
@@ -28,6 +51,7 @@ fn run_migrations(conn: &Connection) -> Result<(), rusqlite::Error> {
 
     let migrations: Vec<(&str, &str)> = vec![
         ("001_create_notes", include_str!("migrations/001_create_notes.sql")),
+        ("002_create_chunks", include_str!("migrations/002_create_chunks.sql")),
     ];
 
     for (name, sql) in migrations {

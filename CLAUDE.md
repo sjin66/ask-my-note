@@ -45,10 +45,10 @@ ask-my-note/
 
 ```bash
 # dev server (frontend + backend with hot reload)
-cargo tauri dev
+npm run tauri dev
 
 # build distributable .app / .dmg
-cargo tauri build
+npm run tauri build
 
 # add a shadcn/ui component
 npx shadcn@latest add <component>

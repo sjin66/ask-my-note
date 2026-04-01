@@ -14,7 +14,21 @@ pub fn save_note(
     title: String,
     content: String,
 ) -> Result<Note, String> {
-    services::notes::save_note(&db, &id, &title, &content)
+    let note = services::notes::save_note(&db, &id, &title, &content)?;
+
+    // Spawn async indexing in the background — don't block the save
+    let db_clone = db.inner().clone();
+    let note_id = note.id.clone();
+    let note_content = note.content.clone();
+
+    tokio::spawn(async move {
+        match services::indexing::index_note(&db_clone, &note_id, &note_content).await {
+            Ok(_) => println!("[indexing] Indexed note {}", note_id),
+            Err(e) => eprintln!("[indexing] Failed to index note {}: {}", note_id, e),
+        }
+    });
+
+    Ok(note)
 }
 
 #[tauri::command]
