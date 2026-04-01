@@ -1,14 +1,23 @@
+import { useEffect } from "react";
 import "./App.css";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { TopBar } from "@/components/layout/TopBar";
 import { NoteEditor } from "@/components/notes/NoteEditor";
+import { SettingsModal } from "@/components/settings/SettingsModal";
+import { OnboardingModal } from "@/components/settings/OnboardingModal";
 import { useAppStore } from "@/stores/appStore";
 import { useNoteStore } from "@/stores/noteStore";
+import { useSettingsStore } from "@/stores/settingsStore";
 import { MessageSquare, FileText } from "lucide-react";
 
 function App() {
   const activeView = useAppStore((s) => s.activeView);
   const activeNoteId = useNoteStore((s) => s.activeNoteId);
+  const checkApiKey = useSettingsStore((s) => s.checkApiKey);
+
+  useEffect(() => {
+    checkApiKey();
+  }, []);
 
   return (
     <div className="flex flex-col h-screen bg-background text-foreground select-none">
@@ -25,6 +34,9 @@ function App() {
           )}
         </main>
       </div>
+
+      <SettingsModal />
+      <OnboardingModal />
     </div>
   );
 }

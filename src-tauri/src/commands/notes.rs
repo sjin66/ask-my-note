@@ -9,6 +9,7 @@ pub fn create_note(db: tauri::State<'_, DbConnection>) -> Result<Note, String> {
 
 #[tauri::command]
 pub fn save_note(
+    app_handle: tauri::AppHandle,
     db: tauri::State<'_, DbConnection>,
     id: String,
     title: String,
@@ -16,13 +17,21 @@ pub fn save_note(
 ) -> Result<Note, String> {
     let note = services::notes::save_note(&db, &id, &title, &content)?;
 
-    // Spawn async indexing in the background — don't block the save
+    // Read API key — skip indexing if not set (don't block the save)
+    let api_key = match services::api_key::get_api_key(&app_handle) {
+        Ok(key) => key,
+        Err(_) => {
+            eprintln!("[indexing] Skipped — no API key set");
+            return Ok(note);
+        }
+    };
+
     let db_clone = db.inner().clone();
     let note_id = note.id.clone();
     let note_content = note.content.clone();
 
-    tokio::spawn(async move {
-        match services::indexing::index_note(&db_clone, &note_id, &note_content).await {
+    tauri::async_runtime::spawn(async move {
+        match services::indexing::index_note(&db_clone, &note_id, &note_content, &api_key).await {
             Ok(_) => println!("[indexing] Indexed note {}", note_id),
             Err(e) => eprintln!("[indexing] Failed to index note {}: {}", note_id, e),
         }

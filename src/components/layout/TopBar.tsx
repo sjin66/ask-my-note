@@ -2,10 +2,12 @@ import { MessageSquare, FileText, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAppStore } from "@/stores/appStore";
+import { useSettingsStore } from "@/stores/settingsStore";
 import { cn } from "@/lib/utils";
 
 export function TopBar() {
   const { activeView, setActiveView } = useAppStore();
+  const openSettings = useSettingsStore((s) => s.openSettings);
 
   return (
     <header className="flex items-center justify-between px-4 h-12 border-b border-border/60 bg-background/80 backdrop-blur-sm shrink-0">
@@ -38,7 +40,12 @@ export function TopBar() {
 
       <Tooltip>
         <TooltipTrigger>
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground transition-colors duration-150">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-muted-foreground hover:text-foreground transition-colors duration-150"
+            onClick={openSettings}
+          >
             <Settings className="h-4 w-4" />
           </Button>
         </TooltipTrigger>

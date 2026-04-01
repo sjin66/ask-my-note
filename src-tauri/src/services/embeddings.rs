@@ -1,17 +1,19 @@
 use async_openai::{
     Client,
+    config::OpenAIConfig,
     types::{CreateEmbeddingRequestArgs, EmbeddingInput},
 };
 
 const EMBEDDING_MODEL: &str = "text-embedding-3-small";
 const EMBEDDING_DIMS: usize = 1536;
 
-pub async fn embed_texts(texts: &[String]) -> Result<Vec<Vec<f32>>, String> {
+pub async fn embed_texts(texts: &[String], api_key: &str) -> Result<Vec<Vec<f32>>, String> {
     if texts.is_empty() {
         return Ok(vec![]);
     }
 
-    let client = Client::new();
+    let config = OpenAIConfig::new().with_api_key(api_key);
+    let client = Client::with_config(config);
 
     let request = CreateEmbeddingRequestArgs::default()
         .model(EMBEDDING_MODEL)
@@ -31,7 +33,6 @@ pub async fn embed_texts(texts: &[String]) -> Result<Vec<Vec<f32>>, String> {
         embeddings[idx] = item.embedding.iter().map(|&v| v as f32).collect();
     }
 
-    // Verify dimensions
     for (i, emb) in embeddings.iter().enumerate() {
         if emb.len() != EMBEDDING_DIMS {
             return Err(format!(
@@ -44,7 +45,7 @@ pub async fn embed_texts(texts: &[String]) -> Result<Vec<Vec<f32>>, String> {
     Ok(embeddings)
 }
 
-pub async fn embed_single(text: &str) -> Result<Vec<f32>, String> {
-    let results = embed_texts(&[text.to_string()]).await?;
+pub async fn embed_single(text: &str, api_key: &str) -> Result<Vec<f32>, String> {
+    let results = embed_texts(&[text.to_string()], api_key).await?;
     results.into_iter().next().ok_or_else(|| "No embedding returned".to_string())
 }

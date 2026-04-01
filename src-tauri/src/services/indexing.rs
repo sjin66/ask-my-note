@@ -4,7 +4,7 @@ use crate::services::{chunker, embeddings};
 
 /// Index a note: chunk its content, embed the chunks, store in sqlite-vec.
 /// Deletes any existing chunks for this note first (full re-index on every save).
-pub async fn index_note(db: &DbConnection, note_id: &str, content: &str) -> Result<(), String> {
+pub async fn index_note(db: &DbConnection, note_id: &str, content: &str, api_key: &str) -> Result<(), String> {
     // Strip HTML tags for plain text chunking
     let plain_text = strip_html(content);
 
@@ -28,7 +28,7 @@ pub async fn index_note(db: &DbConnection, note_id: &str, content: &str) -> Resu
 
     // 2. Embed all chunks in one batch API call
     let texts: Vec<String> = text_chunks.iter().map(|c| c.content.clone()).collect();
-    let embeddings_result = embeddings::embed_texts(&texts).await?;
+    let embeddings_result = embeddings::embed_texts(&texts, api_key).await?;
 
     // 3. Store in DB (delete old chunks, insert new ones)
     let conn = db.0.lock().map_err(|e| e.to_string())?;

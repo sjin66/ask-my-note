@@ -5,11 +5,11 @@ mod services;
 
 use tauri::Manager;
 
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_store::Builder::default().build())
         .setup(|app| {
             let app_dir = app
                 .path()
@@ -27,6 +27,9 @@ pub fn run() {
             commands::notes::list_notes,
             commands::notes::get_note,
             commands::notes::delete_note,
+            commands::api_key::save_api_key,
+            commands::api_key::has_api_key,
+            commands::api_key::delete_api_key,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
