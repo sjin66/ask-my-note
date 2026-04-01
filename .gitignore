@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+dist-ssr/
+src-tauri/target/
+
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+
+# macOS
+.DS_Store
+
+# Tauri
+src-tauri/gen/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.sw?
