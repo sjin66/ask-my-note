@@ -8,7 +8,7 @@ Goal: turn scattered thoughts into structured insights and actionable outputs.
 
 - **App shell**: Tauri v2 (Rust backend + WebView frontend)
 - **Frontend**: React + TypeScript + Tailwind CSS v4 + Vite
-- **UI components**: shadcn/ui (`npx shadcn@latest add <component>`)
+- **UI components**: shadcn/ui (`pnpm dlx shadcn@latest add <component>`)
 - **Icons**: lucide-react
 - **State**: Zustand
 - **Note editor**: Tiptap
@@ -45,28 +45,28 @@ ask-my-note/
 
 ```bash
 # dev server (frontend + backend with hot reload)
-npm run tauri dev
+pnpm tauri dev
 
 # build distributable .app / .dmg
-npm run tauri build
+pnpm tauri build
 
 # add a shadcn/ui component
-npx shadcn@latest add <component>
+pnpm dlx shadcn@latest add <component>
 
 # run Rust tests
 cd src-tauri && cargo test
 
 # run frontend tests
-npm test
+pnpm test
 
 # lint
-npm run lint && cd src-tauri && cargo clippy
+pnpm lint && cd src-tauri && cargo clippy
 ```
 
 ## shadcn/ui Usage
 
 - Components live in `src/components/ui/` — never edit them manually
-- Always add new components via CLI: `npx shadcn@latest add <name>`
+- Always add new components via CLI: `pnpm dlx shadcn@latest add <name>`
 - Use `cn()` from `@/lib/utils` to merge Tailwind classes
 - Import paths use the `@/` alias (e.g. `@/components/ui/button`)
 - `TooltipProvider` is mounted in `src/main.tsx` — wrap app once at root
