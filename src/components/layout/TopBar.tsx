@@ -10,15 +10,15 @@ export function TopBar() {
   const openSettings = useSettingsStore((s) => s.openSettings);
 
   return (
-    <header className="flex items-center justify-between px-4 h-12 border-b border-border/60 bg-background/80 backdrop-blur-sm shrink-0">
-      <div className="flex items-center gap-0.5 bg-secondary/60 rounded-lg p-0.5">
+    <header className="border-border/60 bg-background/80 flex h-12 shrink-0 items-center justify-between border-b px-4 backdrop-blur-sm">
+      <div className="bg-secondary/60 flex items-center gap-0.5 rounded-lg p-0.5">
         <button
           onClick={() => setActiveView("notes")}
           className={cn(
-            "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-150",
+            "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-all duration-150",
             activeView === "notes"
               ? "bg-background text-foreground shadow-sm"
-              : "text-muted-foreground hover:text-foreground"
+              : "text-muted-foreground hover:text-foreground",
           )}
         >
           <FileText className="h-3.5 w-3.5" />
@@ -27,10 +27,10 @@ export function TopBar() {
         <button
           onClick={() => setActiveView("chat")}
           className={cn(
-            "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-150",
+            "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-all duration-150",
             activeView === "chat"
               ? "bg-background text-foreground shadow-sm"
-              : "text-muted-foreground hover:text-foreground"
+              : "text-muted-foreground hover:text-foreground",
           )}
         >
           <MessageSquare className="h-3.5 w-3.5" />
@@ -43,7 +43,7 @@ export function TopBar() {
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-muted-foreground hover:text-foreground transition-colors duration-150"
+            className="text-muted-foreground hover:text-foreground h-8 w-8 transition-colors duration-150"
             onClick={openSettings}
           >
             <Settings className="h-4 w-4" />

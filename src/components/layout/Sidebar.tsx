@@ -9,15 +9,15 @@ export function Sidebar() {
 
   useEffect(() => {
     loadNotes();
-  }, []);
+  }, [loadNotes]);
 
   return (
-    <aside className="w-60 shrink-0 border-r border-border/60 bg-sidebar flex flex-col">
-      <div className="p-3 space-y-2">
+    <aside className="border-border/60 bg-sidebar flex w-60 shrink-0 flex-col border-r">
+      <div className="space-y-2 p-3">
         <Button
           variant="outline"
           size="sm"
-          className="w-full justify-start gap-2 text-sm border-dashed border-border/80 text-muted-foreground hover:text-foreground hover:border-border transition-all duration-150"
+          className="border-border/80 text-muted-foreground hover:text-foreground hover:border-border w-full justify-start gap-2 border-dashed text-sm transition-all duration-150"
           onClick={createNote}
         >
           <Plus className="h-4 w-4" />
@@ -25,11 +25,11 @@ export function Sidebar() {
         </Button>
 
         <div className="relative">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/60" />
+          <Search className="text-muted-foreground/60 absolute top-1/2 left-2.5 h-3.5 w-3.5 -translate-y-1/2" />
           <input
             type="text"
             placeholder="Search notes..."
-            className="w-full h-8 pl-8 pr-3 text-sm bg-background/60 border border-border/60 rounded-md outline-none placeholder:text-muted-foreground/50 focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all duration-150"
+            className="bg-background/60 border-border/60 placeholder:text-muted-foreground/50 focus:border-ring focus:ring-ring/30 h-8 w-full rounded-md border pr-3 pl-8 text-sm transition-all duration-150 outline-none focus:ring-1"
           />
         </div>
       </div>
@@ -37,12 +37,12 @@ export function Sidebar() {
       {notes.length > 0 ? (
         <NoteList />
       ) : (
-        <div className="flex-1 flex flex-col items-center justify-center py-12 px-4 text-center">
-          <div className="h-10 w-10 rounded-xl bg-secondary/80 flex items-center justify-center mb-3">
-            <FileText className="h-5 w-5 text-muted-foreground/60" />
+        <div className="flex flex-1 flex-col items-center justify-center px-4 py-12 text-center">
+          <div className="bg-secondary/80 mb-3 flex h-10 w-10 items-center justify-center rounded-xl">
+            <FileText className="text-muted-foreground/60 h-5 w-5" />
           </div>
-          <p className="text-sm font-medium text-muted-foreground mb-1">No notes yet</p>
-          <p className="text-xs text-muted-foreground/60 leading-relaxed">
+          <p className="text-muted-foreground mb-1 text-sm font-medium">No notes yet</p>
+          <p className="text-muted-foreground/60 text-xs leading-relaxed">
             Create your first note to get started
           </p>
         </div>

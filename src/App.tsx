@@ -22,15 +22,15 @@ function App() {
   }, [checkApiKey, loadProvider]);
 
   return (
-    <div className="flex flex-col h-screen bg-background text-foreground select-none">
+    <div className="bg-background text-foreground flex h-screen flex-col select-none">
       <TopBar />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
-        <main className="flex-1 flex overflow-hidden">
+        <main className="flex flex-1 overflow-hidden">
           {activeView === "notes" && activeNoteId ? (
             <NoteEditor />
           ) : (
-            <div className="flex-1 flex items-center justify-center">
+            <div className="flex flex-1 items-center justify-center">
               <EmptyState view={activeView} />
             </div>
           )}
@@ -45,21 +45,21 @@ function App() {
 
 function EmptyState({ view }: { view: "notes" | "chat" }) {
   return (
-    <div className="flex flex-col items-center gap-3 text-center max-w-xs">
-      <div className="h-12 w-12 rounded-2xl bg-secondary/60 flex items-center justify-center">
+    <div className="flex max-w-xs flex-col items-center gap-3 text-center">
+      <div className="bg-secondary/60 flex h-12 w-12 items-center justify-center rounded-2xl">
         {view === "notes" ? (
-          <FileText className="h-6 w-6 text-muted-foreground/50" />
+          <FileText className="text-muted-foreground/50 h-6 w-6" />
         ) : (
-          <MessageSquare className="h-6 w-6 text-muted-foreground/50" />
+          <MessageSquare className="text-muted-foreground/50 h-6 w-6" />
         )}
       </div>
       <div>
-        <p className="text-sm font-medium text-muted-foreground">
+        <p className="text-muted-foreground text-sm font-medium">
           {view === "notes"
             ? "Select a note or create a new one"
             : "Ask a question about your notes"}
         </p>
-        <p className="text-xs text-muted-foreground/50 mt-1">
+        <p className="text-muted-foreground/50 mt-1 text-xs">
           {view === "notes"
             ? "Your notes will appear in the sidebar"
             : "AI will search your notes and provide cited answers"}
