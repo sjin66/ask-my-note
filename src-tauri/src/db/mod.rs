@@ -34,7 +34,7 @@ pub fn init_db(app_dir: &std::path::Path) -> Result<DbConnection, rusqlite::Erro
         |row| row.get(0),
     )?;
     if !vec_exists {
-        conn.execute_batch("CREATE VIRTUAL TABLE vec_chunks USING vec0(embedding float[1536]);")?;
+        conn.execute_batch("CREATE VIRTUAL TABLE vec_chunks USING vec0(embedding float[1024]);")?;
     }
 
     Ok(DbConnection(Arc::new(Mutex::new(conn))))
@@ -52,6 +52,7 @@ fn run_migrations(conn: &Connection) -> Result<(), rusqlite::Error> {
     let migrations: Vec<(&str, &str)> = vec![
         ("001_create_notes", include_str!("migrations/001_create_notes.sql")),
         ("002_create_chunks", include_str!("migrations/002_create_chunks.sql")),
+        ("003_resize_vec_1024", include_str!("migrations/003_resize_vec_1024.sql")),
     ];
 
     for (name, sql) in migrations {
