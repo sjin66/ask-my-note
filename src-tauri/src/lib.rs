@@ -32,6 +32,12 @@ pub fn run() {
             commands::api_key::delete_api_key,
             commands::api_key::save_provider,
             commands::api_key::get_provider,
+            commands::chat::create_conversation,
+            commands::chat::list_conversations,
+            commands::chat::get_conversation_messages,
+            commands::chat::get_message_citations,
+            commands::chat::delete_conversation,
+            commands::chat::send_message,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

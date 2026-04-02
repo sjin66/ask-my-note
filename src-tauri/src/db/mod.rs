@@ -1,4 +1,6 @@
 pub mod chunks;
+pub mod conversations;
+pub mod messages;
 pub mod notes;
 
 use rusqlite::{Connection, ffi::sqlite3_auto_extension};
@@ -57,6 +59,7 @@ fn run_migrations(conn: &Connection) -> Result<(), rusqlite::Error> {
         ("001_create_notes", include_str!("migrations/001_create_notes.sql")),
         ("002_create_chunks", include_str!("migrations/002_create_chunks.sql")),
         ("003_resize_vec_1024", include_str!("migrations/003_resize_vec_1024.sql")),
+        ("004_create_conversations", include_str!("migrations/004_create_conversations.sql")),
     ];
 
     for (name, sql) in migrations {
