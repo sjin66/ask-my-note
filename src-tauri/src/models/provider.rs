@@ -1,16 +1,11 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum AiProvider {
+    #[default]
     BigModel,
     OpenAI,
-}
-
-impl Default for AiProvider {
-    fn default() -> Self {
-        AiProvider::BigModel
-    }
 }
 
 impl AiProvider {
@@ -28,6 +23,8 @@ impl AiProvider {
         }
     }
 
+    /// Used by the upcoming chat service (Phase 5)
+    #[allow(dead_code)]
     pub fn chat_model(&self) -> &str {
         match self {
             AiProvider::BigModel => "glm-4",
@@ -35,13 +32,7 @@ impl AiProvider {
         }
     }
 
-    pub fn embedding_dims(&self) -> usize {
-        // Standardized to 1024 for both providers
-        // BigModel embedding-2: native 1024
-        // OpenAI text-embedding-3-small: reduced from 1536 via dimensions param
-        1024
-    }
-
+    #[allow(dead_code)]
     pub fn display_name(&self) -> &str {
         match self {
             AiProvider::BigModel => "BigModel (GLM)",

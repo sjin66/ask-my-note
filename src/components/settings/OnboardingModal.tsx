@@ -35,7 +35,7 @@ export function OnboardingModal() {
 
   if (hasApiKey !== false) return null;
 
-  const selected = PROVIDER_OPTIONS.find((p) => p.value === provider)!;
+  const selected = PROVIDER_OPTIONS.find((p) => p.value === provider) ?? PROVIDER_OPTIONS[0];
 
   const handleSave = async () => {
     setError("");

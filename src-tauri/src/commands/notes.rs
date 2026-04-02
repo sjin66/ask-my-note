@@ -25,7 +25,10 @@ pub fn save_note(
             return Ok(note);
         }
     };
-    let provider = services::api_key::get_provider(&app_handle).unwrap_or_default();
+    let provider = services::api_key::get_provider(&app_handle).unwrap_or_else(|e| {
+        eprintln!("[indexing] Failed to read provider, defaulting to BigModel: {}", e);
+        Default::default()
+    });
 
     let db_clone = db.inner().clone();
     let note_id = note.id.clone();

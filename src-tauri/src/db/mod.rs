@@ -12,6 +12,10 @@ static INIT_VEC: Once = Once::new();
 pub fn init_db(app_dir: &std::path::Path) -> Result<DbConnection, rusqlite::Error> {
     // Register sqlite-vec as auto extension (once, before any connection)
     INIT_VEC.call_once(|| {
+        // SAFETY: `sqlite3_vec_init` has the exact C function signature that
+        // `sqlite3_auto_extension` expects. `call_once` ensures this runs at
+        // most once before any connection is opened.
+        #[allow(clippy::missing_transmute_annotations)]
         unsafe {
             sqlite3_auto_extension(Some(std::mem::transmute(
                 sqlite_vec::sqlite3_vec_init as *const (),

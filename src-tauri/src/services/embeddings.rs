@@ -45,7 +45,7 @@ pub async fn embed_texts(
     let mut embeddings: Vec<Vec<f32>> = vec![vec![]; texts.len()];
     for item in response.data {
         let idx = item.index as usize;
-        embeddings[idx] = item.embedding.iter().map(|&v| v as f32).collect();
+        embeddings[idx] = item.embedding.to_vec();
     }
 
     for (i, emb) in embeddings.iter().enumerate() {
@@ -62,6 +62,8 @@ pub async fn embed_texts(
     Ok(embeddings)
 }
 
+/// Used by the upcoming RAG retrieval (Phase 5)
+#[allow(dead_code)]
 pub async fn embed_single(
     text: &str,
     api_key: &str,

@@ -47,7 +47,11 @@ export function SettingsModal() {
   };
 
   const handleDelete = async () => {
-    await deleteApiKey();
+    try {
+      await deleteApiKey();
+    } catch (e) {
+      console.error("Failed to delete API key:", e);
+    }
     setKey("");
     setError("");
   };

@@ -19,7 +19,7 @@ function App() {
   useEffect(() => {
     checkApiKey();
     loadProvider();
-  }, []);
+  }, [checkApiKey, loadProvider]);
 
   return (
     <div className="flex flex-col h-screen bg-background text-foreground select-none">
