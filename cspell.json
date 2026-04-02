@@ -24,6 +24,7 @@
     "askmynote",
     "autoincrement",
     "chunker",
+    "conv",
     "clippy",
     "toplevel",
     "serializable",

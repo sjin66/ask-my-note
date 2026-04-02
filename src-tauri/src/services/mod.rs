@@ -1,5 +1,9 @@
 pub mod api_key;
+pub mod chat;
 pub mod chunker;
+pub mod conversation;
 pub mod embeddings;
 pub mod indexing;
 pub mod notes;
+pub mod prompt;
+pub mod retrieval;
