@@ -29,13 +29,15 @@ export function NoteEditor() {
         editor.commands.setContent(activeNote.content || "");
       }
     }
+    // Only re-sync when the active note changes, not on every activeNote/editor reference change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeNoteId]);
 
   const handleSave = useCallback(() => {
     if (!activeNoteId || !editor) return;
     const content = editor.getHTML();
     saveNote(activeNoteId, title, content);
-  }, [activeNoteId, title, editor]);
+  }, [activeNoteId, title, editor, saveNote]);
 
   useAutoSave(handleSave, [title, editor?.getHTML()]);
 
@@ -44,14 +46,14 @@ export function NoteEditor() {
   }
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
+    <div className="flex flex-1 flex-col overflow-hidden">
       <div className="px-8 pt-6 pb-2">
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Untitled"
-          className="w-full text-2xl font-semibold bg-transparent border-none outline-none placeholder:text-muted-foreground/40 text-foreground"
+          className="placeholder:text-muted-foreground/40 text-foreground w-full border-none bg-transparent text-2xl font-semibold outline-none"
         />
       </div>
       <div className="flex-1 overflow-y-auto">

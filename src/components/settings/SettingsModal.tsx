@@ -76,7 +76,7 @@ export function SettingsModal() {
           {/* Provider selector */}
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm">
-              <Bot className="h-4 w-4 text-muted-foreground" />
+              <Bot className="text-muted-foreground h-4 w-4" />
               <span className="font-medium">AI Provider</span>
             </div>
             <div className="flex gap-2">
@@ -89,7 +89,7 @@ export function SettingsModal() {
                     "flex-1 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors",
                     provider === opt.value
                       ? "border-primary bg-primary text-primary-foreground"
-                      : "border-border bg-background text-foreground hover:bg-muted"
+                      : "border-border bg-background text-foreground hover:bg-muted",
                   )}
                 >
                   {opt.label}
@@ -101,7 +101,7 @@ export function SettingsModal() {
           {/* API key */}
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-sm">
-              <KeyRound className="h-4 w-4 text-muted-foreground" />
+              <KeyRound className="text-muted-foreground h-4 w-4" />
               <span className="font-medium">API Key</span>
               {hasApiKey ? (
                 <span className="ml-auto flex items-center gap-1.5 text-xs text-green-600">
@@ -127,9 +127,7 @@ export function SettingsModal() {
               onKeyDown={(e) => e.key === "Enter" && handleSave()}
             />
 
-            {error && (
-              <p className="text-xs text-destructive">{error}</p>
-            )}
+            {error && <p className="text-destructive text-xs">{error}</p>}
 
             <div className="flex gap-2">
               <Button

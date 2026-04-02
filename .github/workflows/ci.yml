@@ -49,6 +49,15 @@ jobs:
       - name: TypeScript type check
         run: pnpm tsc --noEmit
 
+      - name: ESLint
+        run: pnpm lint
+
+      - name: Prettier format check
+        run: pnpm format:check
+
+      - name: Spell check
+        run: pnpm spell
+
       - name: Cargo clippy
         working-directory: src-tauri
         run: cargo clippy -- -D warnings

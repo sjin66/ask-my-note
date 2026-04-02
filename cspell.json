@@ -1,0 +1,34 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "ignorePaths": [
+    "node_modules/",
+    "dist/",
+    "src-tauri/target/",
+    "src/components/ui/",
+    "pnpm-lock.yaml",
+    ".claude/"
+  ],
+  "words": [
+    "tauri",
+    "tiptap",
+    "zustand",
+    "shadcn",
+    "lucide",
+    "tailwindcss",
+    "rusqlite",
+    "tiktoken",
+    "sqlite",
+    "openai",
+    "bigmodel",
+    "askmynote",
+    "autoincrement",
+    "chunker",
+    "clippy",
+    "toplevel",
+    "serializable",
+    "dedup",
+    "noEmit",
+    "lineheight"
+  ]
+}

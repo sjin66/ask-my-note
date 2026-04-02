@@ -57,14 +57,14 @@ export function OnboardingModal() {
       <DialogContent className="sm:max-w-md" showCloseButton={false}>
         <DialogHeader>
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-accent/10 flex items-center justify-center">
-              <Sparkles className="h-4 w-4 text-accent" />
+            <div className="bg-accent/10 flex h-8 w-8 items-center justify-center rounded-lg">
+              <Sparkles className="text-accent h-4 w-4" />
             </div>
             <DialogTitle>Welcome to ask-my-note</DialogTitle>
           </div>
           <DialogDescription className="pt-1">
-            Choose your AI provider and enter your API key. This powers the chat
-            and note search features. Your key is stored locally on your machine.
+            Choose your AI provider and enter your API key. This powers the chat and note search
+            features. Your key is stored locally on your machine.
           </DialogDescription>
         </DialogHeader>
 
@@ -82,7 +82,7 @@ export function OnboardingModal() {
                   "flex-1 rounded-md border px-3 py-2 text-sm font-medium transition-colors",
                   provider === opt.value
                     ? "border-primary bg-primary text-primary-foreground"
-                    : "border-border bg-background text-foreground hover:bg-muted"
+                    : "border-border bg-background text-foreground hover:bg-muted",
                 )}
               >
                 {opt.label}
@@ -102,19 +102,13 @@ export function OnboardingModal() {
             autoFocus
           />
 
-          {error && (
-            <p className="text-xs text-destructive">{error}</p>
-          )}
+          {error && <p className="text-destructive text-xs">{error}</p>}
 
-          <Button
-            onClick={handleSave}
-            disabled={saving || !key.trim()}
-            className="w-full"
-          >
+          <Button onClick={handleSave} disabled={saving || !key.trim()} className="w-full">
             {saving ? "Saving..." : "Get Started"}
           </Button>
 
-          <p className="text-xs text-muted-foreground text-center">
+          <p className="text-muted-foreground text-center text-xs">
             {selected.hint} —{" "}
             <a
               href={selected.keyUrl}
