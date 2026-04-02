@@ -1,0 +1,2 @@
+# Exclude Claude Code plugins from GitHub language stats
+.claude/** linguist-vendored
