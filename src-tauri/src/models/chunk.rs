@@ -9,6 +9,7 @@ pub struct Chunk {
     pub token_count: i32,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub struct ChunkWithEmbedding {
     pub chunk: Chunk,

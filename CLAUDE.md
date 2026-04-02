@@ -132,3 +132,20 @@ Defer to v2. Build light mode first with semantic color tokens so dark mode is a
 - Tailwind v4 uses `@tailwindcss/vite` plugin (not PostCSS) — do not add `tailwind.config.ts`
 - shadcn/ui uses `@base-ui/react` for some primitives (e.g. Tooltip) — no `asChild` prop on Tooltip triggers
 - Rust must be sourced before running Tauri: `source ~/.cargo/env`
+
+## feature Development workflow
+
+For any feature work, always follow this order:
+
+1. Understand the requirement
+2. Inspect relevant files and existing patterns
+3. Propose a short implementation plan
+4. Wait for approval before making large code changes
+5. Implement in small, reviewable steps, use checkbox to indicate the status of each steps
+6. Run tests and lint
+7. Perform self-review:
+   - security
+   - coding standards
+   - type safety
+   - edge cases
+8. Summarize changes and remaining risks

@@ -17,7 +17,7 @@ pub fn save_note(
 ) -> Result<Note, String> {
     let note = services::notes::save_note(&db, &id, &title, &content)?;
 
-    // Read API key — skip indexing if not set (don't block the save)
+    // Read API key + provider — skip indexing if not set (don't block the save)
     let api_key = match services::api_key::get_api_key(&app_handle) {
         Ok(key) => key,
         Err(_) => {
@@ -25,13 +25,17 @@ pub fn save_note(
             return Ok(note);
         }
     };
+    let provider = services::api_key::get_provider(&app_handle).unwrap_or_else(|e| {
+        eprintln!("[indexing] Failed to read provider, defaulting to BigModel: {}", e);
+        Default::default()
+    });
 
     let db_clone = db.inner().clone();
     let note_id = note.id.clone();
     let note_content = note.content.clone();
 
     tauri::async_runtime::spawn(async move {
-        match services::indexing::index_note(&db_clone, &note_id, &note_content, &api_key).await {
+        match services::indexing::index_note(&db_clone, &note_id, &note_content, &api_key, provider).await {
             Ok(_) => println!("[indexing] Indexed note {}", note_id),
             Err(e) => eprintln!("[indexing] Failed to index note {}: {}", note_id, e),
         }

@@ -25,6 +25,9 @@ npm-debug.log*
 # Claude Code local settings
 .claude/settings.local.json
 
+# Personal notes
+Note.md
+
 # Editor
 .vscode/*
 !.vscode/extensions.json

@@ -41,6 +41,8 @@ pub fn insert_with_embedding(
     Ok(chunk_id)
 }
 
+/// Used by the upcoming RAG retrieval (Phase 5)
+#[allow(dead_code)]
 pub fn search_similar(
     conn: &Connection,
     query_embedding: &[f32],

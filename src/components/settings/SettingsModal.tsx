@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { KeyRound, Trash2 } from "lucide-react";
+import { KeyRound, Trash2, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -9,19 +9,33 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { useSettingsStore } from "@/stores/settingsStore";
+import { useSettingsStore, type AiProvider } from "@/stores/settingsStore";
+import { cn } from "@/lib/utils";
+
+const PROVIDER_OPTIONS: { value: AiProvider; label: string }[] = [
+  { value: "bigmodel", label: "BigModel (GLM)" },
+  { value: "openai", label: "OpenAI" },
+];
 
 export function SettingsModal() {
-  const { isSettingsOpen, closeSettings, hasApiKey, saving, saveApiKey, deleteApiKey } =
-    useSettingsStore();
+  const {
+    isSettingsOpen,
+    closeSettings,
+    hasApiKey,
+    saving,
+    saveApiKey,
+    deleteApiKey,
+    provider,
+    saveProvider,
+  } = useSettingsStore();
 
   const [key, setKey] = useState("");
   const [error, setError] = useState("");
 
   const handleSave = async () => {
     setError("");
-    if (!key.trim().startsWith("sk-") || key.trim().length < 20) {
-      setError("Key must start with 'sk-' and be at least 20 characters.");
+    if (key.trim().length < 10) {
+      setError("API key must be at least 10 characters.");
       return;
     }
     try {
@@ -33,9 +47,21 @@ export function SettingsModal() {
   };
 
   const handleDelete = async () => {
-    await deleteApiKey();
+    try {
+      await deleteApiKey();
+    } catch (e) {
+      console.error("Failed to delete API key:", e);
+    }
     setKey("");
     setError("");
+  };
+
+  const handleProviderChange = async (newProvider: AiProvider) => {
+    try {
+      await saveProvider(newProvider);
+    } catch (e) {
+      console.error("Failed to switch provider:", e);
+    }
   };
 
   return (
@@ -47,10 +73,36 @@ export function SettingsModal() {
         </DialogHeader>
 
         <div className="space-y-4 pt-2">
+          {/* Provider selector */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-sm">
+              <Bot className="h-4 w-4 text-muted-foreground" />
+              <span className="font-medium">AI Provider</span>
+            </div>
+            <div className="flex gap-2">
+              {PROVIDER_OPTIONS.map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => handleProviderChange(opt.value)}
+                  className={cn(
+                    "flex-1 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors",
+                    provider === opt.value
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border bg-background text-foreground hover:bg-muted"
+                  )}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* API key */}
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-sm">
               <KeyRound className="h-4 w-4 text-muted-foreground" />
-              <span className="font-medium">OpenAI API Key</span>
+              <span className="font-medium">API Key</span>
               {hasApiKey ? (
                 <span className="ml-auto flex items-center gap-1.5 text-xs text-green-600">
                   <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
@@ -66,7 +118,7 @@ export function SettingsModal() {
 
             <Input
               type="password"
-              placeholder="sk-..."
+              placeholder="Paste your API key..."
               value={key}
               onChange={(e) => {
                 setKey(e.target.value);
