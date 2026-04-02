@@ -13,9 +13,10 @@ Goal: turn scattered thoughts into structured insights and actionable outputs.
 - **State**: Zustand
 - **Note editor**: Tiptap
 - **Storage**: SQLite (single file) + sqlite-vec extension for vectors
-- **Embeddings**: OpenAI `text-embedding-3-small`
-- **AI chat**: OpenAI GPT-4o
+- **Embeddings**: OpenAI `text-embedding-3-small` or BigModel `embedding-2` (1024 dims, configurable)
+- **AI chat**: OpenAI GPT-4o or BigModel GLM-4 (configurable)
 - **RAG pipeline**: Custom Rust modules in `src-tauri/src/`
+- **Package manager**: pnpm (not npm)
 
 ## Project Structure
 
@@ -27,6 +28,7 @@ ask-my-note/
       notes/                    # Note list, editor, search
       chat/                     # Chat interface, citations
       layout/                   # Sidebar, app shell
+      settings/                 # Settings, onboarding modals
     hooks/                      # Custom React hooks
     stores/                     # Zustand stores
     lib/                        # Frontend utilities (includes shadcn cn() helper)
@@ -36,9 +38,10 @@ ask-my-note/
       commands/                 # Tauri IPC command handlers
       services/                 # Business logic (notes, rag, embeddings, chat)
       db/                       # SQLite access + migrations
-      models/                   # Data structs (note, chunk, conversation, citation)
+      models/                   # Data structs (note, chunk, provider, conversation, citation)
     Cargo.toml
     tauri.conf.json
+  .github/workflows/ci.yml     # GitHub Actions CI pipeline
 ```
 
 ## Common Commands
@@ -53,15 +56,57 @@ pnpm tauri build
 # add a shadcn/ui component
 pnpm dlx shadcn@latest add <component>
 
-# run Rust tests
+# run all frontend checks (tsc + eslint + prettier + cspell)
+pnpm check
+
+# individual checks
+pnpm lint            # ESLint
+pnpm lint:fix        # ESLint with auto-fix
+pnpm format          # Prettier write
+pnpm format:check    # Prettier check (CI mode)
+pnpm spell           # cspell spell check
+
+# run Rust checks
+cd src-tauri && cargo clippy -- -D warnings
 cd src-tauri && cargo test
-
-# run frontend tests
-pnpm test
-
-# lint
-pnpm lint && cd src-tauri && cargo clippy
 ```
+
+## Code Quality Tools
+
+### ESLint
+- Config: `eslint.config.js` (ESLint 10 flat config)
+- Plugins: `typescript-eslint`, `react-hooks`, `react-refresh`, `eslint-config-prettier`
+- Ignores: `dist/`, `src-tauri/`, `src/components/ui/` (auto-generated)
+- React Compiler rules are disabled (not using React Compiler)
+
+### Prettier
+- Config: `.prettierrc`
+- `printWidth: 100`, double quotes, trailing commas, Tailwind class sorting
+- Ignores: `dist/`, `src-tauri/`, `src/components/ui/`, `pnpm-lock.yaml`
+
+### cspell (Spell Check)
+- Config: `cspell.json`
+- Checks: `src/**/*.{ts,tsx}` and `src-tauri/src/**/*.rs`
+- Add project-specific words to the `words` array in `cspell.json`
+
+### Commitlint
+- Config: `commitlint.config.js`
+- Enforces [Conventional Commits](https://www.conventionalcommits.org/) format
+- Valid prefixes: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`, `style:`, `perf:`, `ci:`
+
+### Pre-commit Hooks (husky + lint-staged)
+- **pre-commit**: Runs ESLint fix + Prettier on staged `.ts/.tsx/.css` files
+- **commit-msg**: Validates commit message format via commitlint
+
+### CI Pipeline (GitHub Actions)
+Runs on push/PR to `main`:
+1. TypeScript type check (`tsc --noEmit`)
+2. ESLint
+3. Prettier format check
+4. cspell spell check
+5. Cargo clippy (`-D warnings`)
+6. Cargo test
+7. Full Tauri app build (separate job)
 
 ## shadcn/ui Usage
 
@@ -132,20 +177,25 @@ Defer to v2. Build light mode first with semantic color tokens so dark mode is a
 - Tailwind v4 uses `@tailwindcss/vite` plugin (not PostCSS) — do not add `tailwind.config.ts`
 - shadcn/ui uses `@base-ui/react` for some primitives (e.g. Tooltip) — no `asChild` prop on Tooltip triggers
 - Rust must be sourced before running Tauri: `source ~/.cargo/env`
+- Use `pnpm` everywhere — not `npm`. The project uses pnpm for dependency management.
+- Tauri dev command: `pnpm tauri dev` (not `cargo tauri dev`)
 
-## feature Development workflow
+## Feature Development Workflow
 
 For any feature work, always follow this order:
 
-1. Understand the requirement
-2. Inspect relevant files and existing patterns
-3. Propose a short implementation plan
-4. Wait for approval before making large code changes
-5. Implement in small, reviewable steps, use checkbox to indicate the status of each steps
-6. Run tests and lint
-7. Perform self-review:
+1. Create a feature branch (`feat/description` or `fix/description`)
+2. Understand the requirement
+3. Inspect relevant files and existing patterns
+4. Propose a short implementation plan
+5. Wait for approval before making large code changes
+6. Implement in small, reviewable steps, use checkbox to indicate the status of each step
+7. Run checks: `pnpm check` and `cd src-tauri && cargo clippy -- -D warnings && cargo test`
+8. Perform self-review:
    - security
    - coding standards
    - type safety
    - edge cases
-8. Summarize changes and remaining risks
+9. Commit with conventional commit messages (`feat:`, `fix:`, `chore:`, etc.)
+10. Push and create a PR against `main`
+11. Summarize changes and remaining risks in the PR description
