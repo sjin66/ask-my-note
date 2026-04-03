@@ -7,7 +7,11 @@
     "src-tauri/target/",
     "src/components/ui/",
     "pnpm-lock.yaml",
-    ".claude/"
+    ".claude/",
+    "e2e/",
+    "playwright.config.ts",
+    "playwright-report/",
+    "test-results/"
   ],
   "words": [
     "tauri",

@@ -6,7 +6,7 @@ import eslintConfigPrettier from "eslint-config-prettier";
 import globals from "globals";
 
 export default tseslint.config(
-  { ignores: ["dist/", "src-tauri/", "src/components/ui/"] },
+  { ignores: ["dist/", "src-tauri/", "src/components/ui/", "e2e/", "playwright.config.ts"] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   eslintConfigPrettier,
