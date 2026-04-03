@@ -16,17 +16,20 @@ export function useChatStream() {
   const finishStream = useChatStore((s) => s.finishStream);
 
   useEffect(() => {
-    const unlistenToken = listen<TokenPayload>("chat-token", (event) => {
-      appendToken(event.payload.token);
-    });
+    let cleanup: (() => void) | undefined;
 
-    const unlistenDone = listen<DonePayload>("chat-done", () => {
-      finishStream();
+    Promise.all([
+      listen<TokenPayload>("chat-token", (e) => appendToken(e.payload.token)),
+      listen<DonePayload>("chat-done", () => finishStream()),
+    ]).then(([unlistenToken, unlistenDone]) => {
+      cleanup = () => {
+        unlistenToken();
+        unlistenDone();
+      };
     });
 
     return () => {
-      unlistenToken.then((fn) => fn());
-      unlistenDone.then((fn) => fn());
+      cleanup?.();
     };
   }, [appendToken, finishStream]);
 }

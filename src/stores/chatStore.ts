@@ -74,12 +74,14 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   deleteConversation: async (id) => {
     try {
       await invoke<boolean>("delete_conversation", { conversationId: id });
-      const { activeConversationId } = get();
-      set((s) => ({
-        conversations: s.conversations.filter((c) => c.id !== id),
-        activeConversationId: activeConversationId === id ? null : activeConversationId,
-        messages: activeConversationId === id ? [] : s.messages,
-      }));
+      set((s) => {
+        const isActive = s.activeConversationId === id;
+        return {
+          conversations: s.conversations.filter((c) => c.id !== id),
+          activeConversationId: isActive ? null : s.activeConversationId,
+          messages: isActive ? [] : s.messages,
+        };
+      });
     } catch (e) {
       console.error("Failed to delete conversation:", e);
     }
@@ -99,13 +101,13 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   },
 
   sendMessage: async (content) => {
-    const { activeConversationId } = get();
-    if (!activeConversationId) return;
+    const conversationId = get().activeConversationId;
+    if (!conversationId) return;
 
     // Optimistically add user message to UI
     const optimisticUserMsg: Message = {
       id: crypto.randomUUID(),
-      conversation_id: activeConversationId,
+      conversation_id: conversationId,
       role: "user",
       content,
       created_at: new Date().toISOString(),
@@ -117,22 +119,27 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     }));
 
     try {
-      await invoke<Message>("send_message", {
-        conversationId: activeConversationId,
-        content,
-      });
+      await invoke<Message>("send_message", { conversationId, content });
+
+      // Bail if user switched conversations during the stream
+      if (get().activeConversationId !== conversationId) return;
 
       // Reload messages from DB to get the persisted assistant message + correct IDs
       const messages = await invoke<Message[]>("get_conversation_messages", {
-        conversationId: activeConversationId,
+        conversationId,
       });
+
+      // Check again after second await
+      if (get().activeConversationId !== conversationId) return;
+
       set({ messages, streaming: false, streamingContent: "" });
 
       // Reload conversations to pick up auto-title
-      get().loadConversations();
+      await get().loadConversations();
     } catch (e) {
       console.error("Failed to send message:", e);
-      // Remove optimistic user message on failure
+      // Only clean up if still on the same conversation
+      if (get().activeConversationId !== conversationId) return;
       set((s) => ({
         messages: s.messages.filter((m) => m.id !== optimisticUserMsg.id),
         streaming: false,

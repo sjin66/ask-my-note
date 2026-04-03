@@ -19,12 +19,16 @@ export function CitationList({ messageId }: CitationListProps) {
   const setActiveView = useAppStore((s) => s.setActiveView);
 
   useEffect(() => {
-    if (expanded && !loaded) {
-      loadCitations(messageId).then((result) => {
-        setCitations(result);
-        setLoaded(true);
-      });
-    }
+    if (!expanded || loaded) return;
+    let cancelled = false;
+    loadCitations(messageId).then((result) => {
+      if (cancelled) return;
+      setCitations(result);
+      setLoaded(true);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [expanded, loaded, messageId, loadCitations]);
 
   const handleCitationClick = (noteId: string) => {

@@ -48,11 +48,6 @@ export function ChatView() {
     );
   }
 
-  // Find the last message to determine if it's the streaming target
-  const lastMessage = messages[messages.length - 1];
-  const streamingMessageId =
-    streaming && lastMessage?.role === "user" ? "streaming-placeholder" : lastMessage?.id;
-
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
       <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto px-6 py-4">
@@ -63,7 +58,7 @@ export function ChatView() {
           <MessageBubble
             key="streaming"
             message={{
-              id: streamingMessageId ?? "streaming",
+              id: "streaming",
               conversation_id: "",
               role: "assistant",
               content: "",
