@@ -3,16 +3,19 @@ import "./App.css";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { TopBar } from "@/components/layout/TopBar";
 import { NoteEditor } from "@/components/notes/NoteEditor";
+import { ChatView } from "@/components/chat/ChatView";
 import { SettingsModal } from "@/components/settings/SettingsModal";
 import { OnboardingModal } from "@/components/settings/OnboardingModal";
 import { useAppStore } from "@/stores/appStore";
 import { useNoteStore } from "@/stores/noteStore";
+import { useChatStore } from "@/stores/chatStore";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { MessageSquare, FileText } from "lucide-react";
 
 function App() {
   const activeView = useAppStore((s) => s.activeView);
   const activeNoteId = useNoteStore((s) => s.activeNoteId);
+  const activeConversationId = useChatStore((s) => s.activeConversationId);
   const checkApiKey = useSettingsStore((s) => s.checkApiKey);
   const loadProvider = useSettingsStore((s) => s.loadProvider);
 
@@ -29,6 +32,8 @@ function App() {
         <main className="flex flex-1 overflow-hidden">
           {activeView === "notes" && activeNoteId ? (
             <NoteEditor />
+          ) : activeView === "chat" && activeConversationId ? (
+            <ChatView />
           ) : (
             <div className="flex flex-1 items-center justify-center">
               <EmptyState view={activeView} />

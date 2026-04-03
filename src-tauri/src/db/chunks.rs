@@ -41,8 +41,6 @@ pub fn insert_with_embedding(
     Ok(chunk_id)
 }
 
-/// Used by the upcoming RAG retrieval (Phase 5)
-#[allow(dead_code)]
 pub fn search_similar(
     conn: &Connection,
     query_embedding: &[f32],
@@ -53,16 +51,18 @@ pub fn search_similar(
         .flat_map(|f| f.to_le_bytes())
         .collect::<Vec<u8>>();
 
+    let k = i64::try_from(limit).unwrap_or(i64::MAX);
+
     let mut stmt = conn.prepare(
         "SELECT c.id, c.note_id, c.content, c.chunk_index, v.distance
          FROM vec_chunks v
          INNER JOIN chunks c ON c.id = v.rowid
          WHERE v.embedding MATCH ?1
-         ORDER BY v.distance
-         LIMIT ?2"
+           AND k = ?2
+         ORDER BY v.distance",
     )?;
 
-    let results = stmt.query_map(params![query_blob, limit as i64], |row| {
+    let results = stmt.query_map(params![query_blob, k], |row| {
         Ok(RetrievedChunk {
             chunk_id: row.get(0)?,
             note_id: row.get(1)?,
