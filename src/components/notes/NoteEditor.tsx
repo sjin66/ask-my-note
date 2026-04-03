@@ -9,10 +9,14 @@ export function NoteEditor() {
   const activeNote = notes.find((n) => n.id === activeNoteId);
 
   const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
 
   const editor = useEditor({
     extensions: [StarterKit],
     content: "",
+    onUpdate: ({ editor: e }) => {
+      setContent(e.getHTML());
+    },
     editorProps: {
       attributes: {
         class:
@@ -25,6 +29,7 @@ export function NoteEditor() {
   useEffect(() => {
     if (activeNote) {
       setTitle(activeNote.title);
+      setContent(activeNote.content || "");
       if (editor && editor.getHTML() !== activeNote.content) {
         editor.commands.setContent(activeNote.content || "");
       }
@@ -34,12 +39,11 @@ export function NoteEditor() {
   }, [activeNoteId]);
 
   const handleSave = useCallback(() => {
-    if (!activeNoteId || !editor) return;
-    const content = editor.getHTML();
+    if (!activeNoteId) return;
     saveNote(activeNoteId, title, content);
-  }, [activeNoteId, title, editor, saveNote]);
+  }, [activeNoteId, title, content, saveNote]);
 
-  useAutoSave(handleSave, [title, editor?.getHTML()]);
+  useAutoSave(handleSave, [title, content]);
 
   if (!activeNote || !editor) {
     return null;

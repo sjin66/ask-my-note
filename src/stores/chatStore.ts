@@ -146,7 +146,9 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   },
 
   finishStream: () => {
-    set({ streaming: false });
+    // No-op: streaming lifecycle is fully managed by sendMessage.
+    // chat-done fires before invoke resolves, so clearing streaming
+    // here would hide the placeholder before the final message loads.
   },
 
   loadCitations: async (messageId) => {

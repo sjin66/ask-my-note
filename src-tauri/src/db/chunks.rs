@@ -58,8 +58,8 @@ pub fn search_similar(
          FROM vec_chunks v
          INNER JOIN chunks c ON c.id = v.rowid
          WHERE v.embedding MATCH ?1
-         ORDER BY v.distance
-         LIMIT ?2"
+           AND k = ?2
+         ORDER BY v.distance"
     )?;
 
     let results = stmt.query_map(params![query_blob, limit as i64], |row| {
