@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // E2E tests run in a Node.js / Playwright context, not the browser.
+    // Override the lib and module settings from the root tsconfig accordingly.
+    "lib": ["ES2020"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "types": ["node"],
+    // e2e files are not part of the production bundle — emitting is handled
+    // by ts-jest / Playwright's built-in TS loader at test runtime.
+    "noEmit": true,
+    // Keep strict checks but relax a few rules that are impractical in tests
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  },
+  // Include the playwright config itself plus everything under e2e/
+  "include": ["playwright.config.ts", "e2e/**/*.ts"],
+  // Do NOT reference the Vite node tsconfig — tests are standalone
+  "references": []
+}

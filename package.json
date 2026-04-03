@@ -14,6 +14,11 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\"",
     "spell": "cspell \"src/**/*.{ts,tsx}\" \"src-tauri/src/**/*.rs\"",
     "check": "tsc --noEmit && pnpm lint && pnpm format:check && pnpm spell",
+    "test:e2e": "playwright test",
+    "test:e2e:install": "PW_USE_SYSTEM_CHROME=0 playwright install chromium",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:report": "playwright show-report",
     "prepare": "husky"
   },
   "lint-staged": {
@@ -51,6 +56,7 @@
     "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.5.0",
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.59.1",
     "@tauri-apps/cli": "^2",
     "@types/node": "^25.5.0",
     "@types/react": "^19.1.8",

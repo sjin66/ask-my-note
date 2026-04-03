@@ -66,6 +66,82 @@ jobs:
         working-directory: src-tauri
         run: cargo test
 
+  # ────────────────────────────────────────────────────────────────────────────
+  # E2E Tests (Playwright)
+  # ────────────────────────────────────────────────────────────────────────────
+  # E2E tests are EXCLUDED from the default CI pipeline because the full Tauri
+  # app requires a native GUI / WebView2 environment that is expensive to
+  # provision on GitHub-hosted runners.
+  #
+  # There are two supported CI strategies — uncomment whichever fits:
+  #
+  # STRATEGY A — Web-only smoke tests (fast, no Tauri binary needed)
+  #   Runs Playwright against the Vite dev server only.  Native Tauri IPC calls
+  #   will be unavailable, but layout / rendering / navigation tests work fine.
+  #   Estimated runtime: ~2 min.
+  #
+  # STRATEGY B — Full Tauri E2E (slow, requires display server)
+  #   Spins up `pnpm tauri dev` with a virtual framebuffer (Xvfb on Linux) and
+  #   runs tests against the real WebView.  Requires tauri-driver and a Linux
+  #   runner with xvfb + webkit deps.  Estimated runtime: ~15 min.
+  #
+  # Strategy A enabled: web-only smoke tests against Vite.
+  e2e:
+    name: E2E Tests (web-only smoke)
+    runs-on: ubuntu-latest
+    needs: check
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install frontend dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright Chromium (retry)
+        shell: bash
+        run: |
+          for i in 1 2 3; do
+            echo "Installing Playwright Chromium (attempt $i/3)..."
+            pnpm exec playwright install --with-deps chromium 2>&1 | tee playwright-install.log && exit 0
+            echo "Playwright install failed (attempt $i), retrying in 5s..."
+            sleep 5
+          done
+          echo "Playwright install failed after 3 attempts"
+          cat playwright-install.log
+          exit 1
+
+      - name: Run E2E smoke tests
+        run: pnpm test:e2e
+        env:
+          CI: true
+          PW_USE_SYSTEM_CHROME: "0"
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+
+      - name: Upload test results (JUnit)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-junit
+          path: test-results/junit.xml
+          retention-days: 14
+
   build:
     name: Build Tauri App
     runs-on: macos-latest

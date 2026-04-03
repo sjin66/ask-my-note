@@ -35,3 +35,7 @@ Note.md
 .idea
 *.suo
 *.sw?
+
+# Playwright E2E
+playwright-report/
+test-results/
