@@ -30,6 +30,7 @@
     "serializable",
     "dedup",
     "noEmit",
-    "lineheight"
+    "lineheight",
+    "unlisten"
   ]
 }

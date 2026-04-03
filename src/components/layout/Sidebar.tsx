@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { Plus, Search, FileText, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useNoteStore } from "@/stores/noteStore";
-import { useChatStore } from "@/stores/chatStore";
+import { useNoteStore, type Note } from "@/stores/noteStore";
+import { useChatStore, type Conversation } from "@/stores/chatStore";
 import { useAppStore } from "@/stores/appStore";
 import { NoteList } from "@/components/notes/NoteList";
 import { ConversationList } from "@/components/chat/ConversationList";
@@ -33,13 +33,7 @@ export function Sidebar() {
   );
 }
 
-function NotesSidebar({
-  notes,
-  createNote,
-}: {
-  notes: ReturnType<typeof useNoteStore>["notes"];
-  createNote: () => void;
-}) {
+function NotesSidebar({ notes, createNote }: { notes: Note[]; createNote: () => void }) {
   return (
     <>
       <div className="space-y-2 p-3">
@@ -84,7 +78,7 @@ function ChatSidebar({
   conversations,
   createConversation,
 }: {
-  conversations: ReturnType<typeof useChatStore>["conversations"];
+  conversations: Conversation[];
   createConversation: () => void;
 }) {
   return (
