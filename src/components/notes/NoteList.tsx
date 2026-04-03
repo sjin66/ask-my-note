@@ -13,7 +13,7 @@ export function NoteList() {
 
   return (
     <ScrollArea className="flex-1">
-      <div className="space-y-0.5 p-2">
+      <div className="flex flex-col gap-1 p-2">
         {notes.map((note) => (
           <NoteItem
             key={note.id}
@@ -46,32 +46,42 @@ function NoteItem({ note, isActive, onSelect, onDelete }: NoteItemProps) {
     <button
       onClick={onSelect}
       className={cn(
-        "group w-full rounded-lg px-3 py-2 text-left transition-colors duration-150",
-        isActive ? "bg-background shadow-sm" : "hover:bg-background/60",
+        "group w-full rounded-xl px-3 py-3 text-left transition-colors duration-150",
+        isActive ? "bg-primary/10 text-foreground" : "hover:bg-background/70",
       )}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
           <p
             className={cn(
-              "truncate text-sm",
-              isActive ? "text-foreground font-medium" : "text-foreground/80",
+              "truncate text-sm leading-snug",
+              isActive ? "text-foreground font-semibold" : "text-foreground/80 font-medium",
             )}
           >
             {title}
           </p>
-          <p className="text-muted-foreground/60 mt-0.5 text-xs">{date}</p>
+          <p
+            className={cn(
+              "mt-1 text-xs",
+              isActive ? "text-muted-foreground" : "text-muted-foreground",
+            )}
+          >
+            {date}
+          </p>
         </div>
         <Button
           variant="ghost"
           size="icon"
-          className="text-muted-foreground hover:text-destructive h-6 w-6 shrink-0 opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+          className={cn(
+            "size-6 shrink-0 opacity-0 transition-opacity duration-150 group-hover:opacity-100",
+            "text-muted-foreground hover:text-destructive",
+          )}
           onClick={(e) => {
             e.stopPropagation();
             onDelete();
           }}
         >
-          <Trash2 className="h-3 w-3" />
+          <Trash2 className="size-3" />
         </Button>
       </div>
     </button>

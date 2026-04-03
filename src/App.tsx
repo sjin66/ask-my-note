@@ -50,21 +50,21 @@ function App() {
 
 function EmptyState({ view }: { view: "notes" | "chat" }) {
   return (
-    <div className="flex max-w-xs flex-col items-center gap-3 text-center">
-      <div className="bg-secondary/60 flex h-12 w-12 items-center justify-center rounded-2xl">
+    <div className="border-border bg-card flex max-w-xs flex-col items-center gap-4 rounded-2xl border p-8 text-center shadow-sm">
+      <div className="border-border bg-secondary flex size-14 items-center justify-center rounded-xl border">
         {view === "notes" ? (
-          <FileText className="text-muted-foreground/50 h-6 w-6" />
+          <FileText className="text-muted-foreground size-7" />
         ) : (
-          <MessageSquare className="text-muted-foreground/50 h-6 w-6" />
+          <MessageSquare className="text-muted-foreground size-7" />
         )}
       </div>
       <div>
-        <p className="text-muted-foreground text-sm font-medium">
+        <p className="text-foreground mb-1.5 text-sm font-semibold">
           {view === "notes"
             ? "Select a note or create a new one"
             : "Ask a question about your notes"}
         </p>
-        <p className="text-muted-foreground/50 mt-1 text-xs">
+        <p className="text-muted-foreground text-xs leading-relaxed">
           {view === "notes"
             ? "Your notes will appear in the sidebar"
             : "AI will search your notes and provide cited answers"}

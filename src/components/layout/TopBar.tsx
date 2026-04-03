@@ -10,30 +10,30 @@ export function TopBar() {
   const openSettings = useSettingsStore((s) => s.openSettings);
 
   return (
-    <header className="border-border/60 bg-background/80 flex h-12 shrink-0 items-center justify-between border-b px-4 backdrop-blur-sm">
-      <div className="bg-secondary/60 flex items-center gap-0.5 rounded-lg p-0.5">
+    <header className="border-border bg-background flex h-12 shrink-0 items-center justify-between border-b px-4">
+      <div className="flex items-center gap-1">
         <button
           onClick={() => setActiveView("notes")}
           className={cn(
-            "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-all duration-150",
+            "flex items-center gap-1.5 px-3 py-2 text-sm font-medium transition-all duration-150",
             activeView === "notes"
-              ? "bg-background text-foreground shadow-sm"
-              : "text-muted-foreground hover:text-foreground",
+              ? "text-foreground border-foreground border-b-2"
+              : "text-muted-foreground hover:text-foreground border-b-2 border-transparent",
           )}
         >
-          <FileText className="h-3.5 w-3.5" />
+          <FileText className="size-3.5" />
           Notes
         </button>
         <button
           onClick={() => setActiveView("chat")}
           className={cn(
-            "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-all duration-150",
+            "flex items-center gap-1.5 px-3 py-2 text-sm font-medium transition-all duration-150",
             activeView === "chat"
-              ? "bg-background text-foreground shadow-sm"
-              : "text-muted-foreground hover:text-foreground",
+              ? "text-foreground border-foreground border-b-2"
+              : "text-muted-foreground hover:text-foreground border-b-2 border-transparent",
           )}
         >
-          <MessageSquare className="h-3.5 w-3.5" />
+          <MessageSquare className="size-3.5" />
           Chat
         </button>
       </div>
@@ -43,10 +43,10 @@ export function TopBar() {
           <Button
             variant="ghost"
             size="icon"
-            className="text-muted-foreground hover:text-foreground h-8 w-8 transition-colors duration-150"
+            className="text-muted-foreground hover:text-foreground size-8 transition-colors duration-150"
             onClick={openSettings}
           >
-            <Settings className="h-4 w-4" />
+            <Settings className="size-4" />
           </Button>
         </TooltipTrigger>
         <TooltipContent>Settings</TooltipContent>
