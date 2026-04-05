@@ -20,7 +20,7 @@ export function NoteEditor() {
     editorProps: {
       attributes: {
         class:
-          "prose prose-sm prose-stone max-w-none outline-none min-h-[200px] px-8 py-4 text-foreground",
+          "prose prose-sm prose-stone max-w-none outline-none min-h-[200px] px-10 py-5 text-foreground",
       },
     },
   });
@@ -51,7 +51,7 @@ export function NoteEditor() {
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      <div className="px-8 pt-6 pb-2">
+      <div className="border-border border-b px-10 py-5">
         <input
           type="text"
           value={title}
