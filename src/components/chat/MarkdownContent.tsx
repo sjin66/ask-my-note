@@ -12,6 +12,7 @@ import xml from "highlight.js/lib/languages/xml";
 import css from "highlight.js/lib/languages/css";
 import markdown from "highlight.js/lib/languages/markdown";
 import "highlight.js/styles/github.css";
+import { useNoteStore } from "@/stores/noteStore";
 
 hljs.registerLanguage("javascript", javascript);
 hljs.registerLanguage("js", javascript);
@@ -53,7 +54,7 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
           <strong className="text-foreground font-semibold">{children}</strong>
         ),
         em: ({ children }) => <em className="italic">{children}</em>,
-        code: ({ className, children, ...props }) => {
+        code: ({ node: _node, className, children, ...props }) => {
           if (className) {
             return (
               <code className={className} {...props}>
@@ -83,16 +84,31 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
             {children}
           </blockquote>
         ),
-        a: ({ href, children }) => (
-          <a
-            href={href}
-            className="text-primary hover:text-primary/80 underline underline-offset-2"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {children}
-          </a>
-        ),
+        a: ({ href, children }) => {
+          const setActiveNoteId = useNoteStore.getState().setActiveNoteId;
+          const isNoteLink = href && !href.startsWith("http") && !href.startsWith("/");
+          if (isNoteLink) {
+            return (
+              <button
+                type="button"
+                className="text-primary hover:text-primary/80 underline underline-offset-2"
+                onClick={() => setActiveNoteId(href)}
+              >
+                {children}
+              </button>
+            );
+          }
+          return (
+            <a
+              href={href}
+              className="text-primary hover:text-primary/80 underline underline-offset-2"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {children}
+            </a>
+          );
+        },
         hr: () => <hr className="border-border my-3" />,
         table: ({ children }) => (
           <div className="my-2 overflow-x-auto">
