@@ -1,5 +1,6 @@
 import { useChatStore, type Message } from "@/stores/chatStore";
 import { CitationList } from "@/components/chat/CitationList";
+import { MarkdownContent } from "@/components/chat/MarkdownContent";
 import { cn } from "@/lib/utils";
 
 type MessageBubbleProps = {
@@ -21,12 +22,16 @@ export function MessageBubble({ message, isStreaming }: MessageBubbleProps) {
           isUser ? "bg-primary text-primary-foreground" : "border-border bg-card border",
         )}
       >
-        <p className="text-sm leading-relaxed whitespace-pre-wrap">
-          {displayContent}
-          {isStreaming && (
-            <span className="ml-0.5 inline-block h-4 w-1.5 animate-pulse rounded-sm bg-current opacity-70" />
-          )}
-        </p>
+        {isUser ? (
+          <p className="text-sm leading-relaxed whitespace-pre-wrap">{displayContent}</p>
+        ) : (
+          <div className="text-sm">
+            <MarkdownContent content={displayContent} />
+            {isStreaming && (
+              <span className="ml-0.5 inline-block h-4 w-1.5 animate-pulse rounded-sm bg-current opacity-70" />
+            )}
+          </div>
+        )}
         {!isUser && !isStreaming && message.content.length > 0 && (
           <CitationList messageId={message.id} />
         )}
