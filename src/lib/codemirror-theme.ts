@@ -12,7 +12,7 @@ export const editorTheme: Extension = EditorView.theme({
     backgroundColor: "var(--background)",
   },
   ".cm-content": {
-    padding: "20px 40px",
+    padding: "8px 32px",
     maxWidth: "100%",
     caretColor: "var(--primary)",
   },

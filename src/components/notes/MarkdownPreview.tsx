@@ -12,10 +12,8 @@ type MarkdownPreviewProps = {
 export function MarkdownPreview({ content, scrollRef }: MarkdownPreviewProps) {
   return (
     <ScrollArea className="h-full">
-      <div ref={scrollRef} className="px-10 py-5">
-        <div className="prose prose-stone max-w-none">
-          <MarkdownContent content={content} />
-        </div>
+      <div ref={scrollRef} className="px-8 py-6">
+        <MarkdownContent content={content} />
       </div>
     </ScrollArea>
   );

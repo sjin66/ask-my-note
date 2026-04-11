@@ -3,11 +3,12 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TurndownService from "turndown";
 import { marked } from "marked";
+import { FileCode2, Type, Eye, EyeOff } from "lucide-react";
 import { useNoteStore } from "@/stores/noteStore";
 import { useAutoSave } from "@/hooks/useAutoSave";
 import { MarkdownEditor } from "@/components/notes/MarkdownEditor";
 import { MarkdownPreview } from "@/components/notes/MarkdownPreview";
-import { NoteEditorToolbar } from "@/components/notes/NoteEditorToolbar";
+import { Button } from "@/components/ui/button";
 
 type EditorMode = "rich-text" | "markdown";
 
@@ -27,7 +28,6 @@ function migrateHtmlToMarkdown(html: string, turndown: TurndownService): string 
     try {
       return turndown.turndown(html);
     } catch {
-      // Malformed HTML — return as-is so the user can see and fix it
       return html;
     }
   }
@@ -57,27 +57,31 @@ export function NoteEditor() {
     return migrateHtmlToMarkdown(activeNote.content || "", turndown);
   });
   const [editorMode, setEditorMode] = useState<EditorMode>("rich-text");
-  const [showPreview, setShowPreview] = useState(true);
+  const [showPreview, setShowPreview] = useState(false);
 
-  // Track the previous note ID to detect note switches
   const prevNoteIdRef = useRef<string | null>(null);
 
-  // Tiptap editor instance
   const tiptapEditor = useEditor({
     extensions: [StarterKit],
     content: "",
     onUpdate: ({ editor: e }) => {
-      // Convert HTML back to markdown and update shared state
       const md = turndown.turndown(e.getHTML());
       setContent(md);
     },
     editorProps: {
       attributes: {
-        class:
-          "prose prose-sm prose-stone max-w-none outline-none min-h-[200px] px-10 py-5 text-foreground",
+        class: "prose prose-sm prose-stone max-w-none outline-none px-16 py-2 text-foreground",
       },
     },
   });
+
+  // Sync content to Tiptap when editor becomes ready
+  useEffect(() => {
+    if (!tiptapEditor || editorMode !== "rich-text") return;
+    const html = markdownToHtml(content);
+    tiptapEditor.commands.setContent(html);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tiptapEditor]);
 
   // Sync editor content when switching notes
   useEffect(() => {
@@ -89,7 +93,6 @@ export function NoteEditor() {
     setTitle(activeNote.title);
     setContent(migrated);
 
-    // Update the active editor based on current mode
     if (editorMode === "rich-text" && tiptapEditor) {
       tiptapEditor.commands.setContent(markdownToHtml(migrated));
     } else if (setContentRef.current) {
@@ -101,15 +104,14 @@ export function NoteEditor() {
   /** Toggle between rich text and markdown modes. */
   const handleToggleMode = useCallback(() => {
     if (editorMode === "rich-text") {
-      // Switching to markdown: content state already has markdown (from tiptap onUpdate)
       setEditorMode("markdown");
     } else {
-      // Switching to rich text: convert current markdown to HTML for Tiptap
       if (tiptapEditor) {
         tiptapEditor.commands.setContent(markdownToHtml(content));
       }
       setEditorMode("rich-text");
     }
+    setShowPreview(false);
   }, [editorMode, content, tiptapEditor]);
 
   const handleSave = useCallback(() => {
@@ -125,47 +127,81 @@ export function NoteEditor() {
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      {/* Title bar */}
-      <div className="border-border border-b px-10 py-5">
+      {/* Title — inline, minimal, part of the editor flow */}
+      <div className="px-16 pt-8 pb-1">
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Untitled"
-          className="placeholder:text-muted-foreground/40 text-foreground w-full border-none bg-transparent text-2xl font-semibold outline-none"
+          className="placeholder:text-muted-foreground/30 text-foreground w-full border-none bg-transparent text-2xl font-bold outline-none"
         />
       </div>
 
-      {/* Toolbar */}
-      <NoteEditorToolbar
-        editorMode={editorMode}
-        showPreview={showPreview}
-        onToggleMode={handleToggleMode}
-        onTogglePreview={() => setShowPreview(!showPreview)}
-      />
-
-      {/* Editor area */}
-      {editorMode === "rich-text" ? (
-        <div className="flex-1 overflow-y-auto">
-          <EditorContent editor={tiptapEditor} />
+      {/* Floating toolbar — right-aligned, minimal */}
+      <div className="flex items-center justify-between px-16 pb-2">
+        <p className="text-muted-foreground/50 text-xs">
+          {new Date(activeNote.updated_at).toLocaleString(undefined, {
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </p>
+        <div className="flex items-center gap-0.5">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleToggleMode}
+            title={editorMode === "rich-text" ? "Switch to markdown" : "Switch to rich text"}
+            className="text-muted-foreground/60 hover:text-foreground h-7 w-7"
+          >
+            {editorMode === "rich-text" ? <FileCode2 size={14} /> : <Type size={14} />}
+          </Button>
+          {editorMode === "markdown" && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowPreview(!showPreview)}
+              title={showPreview ? "Hide preview" : "Show preview"}
+              className="text-muted-foreground/60 hover:text-foreground h-7 w-7"
+            >
+              {showPreview ? <EyeOff size={14} /> : <Eye size={14} />}
+            </Button>
+          )}
         </div>
-      ) : (
+      </div>
+
+      {/* Thin divider */}
+      <div className="mx-16">
+        <div className="bg-border h-px" />
+      </div>
+
+      {/* Editor area — single pane by default, full width */}
+      {showPreview && editorMode === "markdown" ? (
         <div className="flex min-h-0 flex-1">
-          <div className={`${showPreview ? "w-1/2" : "w-full"} h-full overflow-hidden`}>
+          <div className="border-border h-full w-1/2 overflow-hidden border-r">
             <MarkdownEditor
               content={content}
               onChange={setContent}
               setContentRef={(fn) => (setContentRef.current = fn)}
             />
           </div>
-          {showPreview && (
-            <>
-              <div className="bg-border w-px shrink-0" />
-              <div className="h-full w-1/2 overflow-hidden">
-                <MarkdownPreview content={content} />
-              </div>
-            </>
-          )}
+          <div className="h-full w-1/2 overflow-hidden">
+            <MarkdownPreview content={content} />
+          </div>
+        </div>
+      ) : editorMode === "rich-text" ? (
+        <div className="flex-1 overflow-y-auto">
+          <EditorContent editor={tiptapEditor} />
+        </div>
+      ) : (
+        <div className="flex-1 overflow-hidden">
+          <MarkdownEditor
+            content={content}
+            onChange={setContent}
+            setContentRef={(fn) => (setContentRef.current = fn)}
+          />
         </div>
       )}
     </div>
