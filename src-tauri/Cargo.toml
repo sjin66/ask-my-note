@@ -32,4 +32,5 @@ chrono = { version = "0.4", features = ["serde"] }
 tiktoken-rs = "0.6"
 anyhow = "1"
 sqlite-vec = "0.1"
+pulldown-cmark = "0.13"
 

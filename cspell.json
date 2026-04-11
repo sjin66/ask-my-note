@@ -15,7 +15,7 @@
   ],
   "words": [
     "tauri",
-    "tiptap",
+    "codemirror",
     "zustand",
     "shadcn",
     "lucide",
@@ -35,6 +35,11 @@
     "dedup",
     "noEmit",
     "lineheight",
-    "unlisten"
+    "unlisten",
+    "pulldown",
+    "turndown",
+    "cmark",
+    "tasklists",
+    "keymap"
   ]
 }

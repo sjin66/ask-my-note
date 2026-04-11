@@ -6,8 +6,8 @@ use crate::services::{chunker, embeddings};
 /// Index a note: chunk its content, embed the chunks, store in sqlite-vec.
 /// Deletes any existing chunks for this note first (full re-index on every save).
 pub async fn index_note(db: &DbConnection, note_id: &str, content: &str, api_key: &str, provider: AiProvider) -> Result<(), String> {
-    // Strip HTML tags for plain text chunking
-    let plain_text = strip_html(content);
+    // Strip markdown syntax for plain text chunking
+    let plain_text = strip_markdown(content);
 
     if plain_text.trim().is_empty() {
         // Nothing to index — just clean up old chunks
@@ -76,29 +76,32 @@ fn mark_indexed(conn: &std::sync::MutexGuard<'_, rusqlite::Connection>, note_id:
     Ok(())
 }
 
-fn strip_html(html: &str) -> String {
-    let mut result = String::with_capacity(html.len());
-    let mut in_tag = false;
+fn strip_markdown(markdown: &str) -> String {
+    use pulldown_cmark::{Event, Options, Parser};
 
-    for ch in html.chars() {
-        match ch {
-            '<' => in_tag = true,
-            '>' => {
-                in_tag = false;
-                result.push(' ');
+    let mut options = Options::empty();
+    options.insert(Options::ENABLE_TABLES);
+    options.insert(Options::ENABLE_STRIKETHROUGH);
+    options.insert(Options::ENABLE_TASKLISTS);
+
+    let parser = Parser::new_ext(markdown, options);
+    let mut plain = String::with_capacity(markdown.len());
+
+    for event in parser {
+        match event {
+            Event::Text(text) | Event::Code(text) => {
+                plain.push_str(&text);
+                plain.push(' ');
             }
-            _ if !in_tag => result.push(ch),
+            Event::SoftBreak | Event::HardBreak | Event::Rule => {
+                plain.push(' ');
+            }
             _ => {}
         }
     }
 
     // Collapse whitespace
-    let collapsed: String = result
-        .split_whitespace()
-        .collect::<Vec<_>>()
-        .join(" ");
-
-    collapsed
+    plain.split_whitespace().collect::<Vec<_>>().join(" ")
 }
 
 #[cfg(test)]
@@ -106,9 +109,11 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_strip_html() {
-        assert_eq!(strip_html("<p>Hello <b>world</b></p>"), "Hello world");
-        assert_eq!(strip_html("no tags"), "no tags");
-        assert_eq!(strip_html("<p></p>"), "");
+    fn test_strip_markdown() {
+        assert_eq!(strip_markdown("# Hello **world**"), "Hello world");
+        assert_eq!(strip_markdown("no formatting"), "no formatting");
+        assert_eq!(strip_markdown("**bold** and *italic*"), "bold and italic");
+        assert_eq!(strip_markdown("[link](url)"), "link");
+        assert_eq!(strip_markdown("`code`"), "code");
     }
 }
