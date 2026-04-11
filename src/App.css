@@ -220,6 +220,7 @@
   margin: 0;
   font-size: 85%;
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  color: var(--foreground);
   background-color: var(--secondary);
   border-radius: 6px;
 }
@@ -231,6 +232,7 @@
   overflow: auto;
   font-size: 85%;
   line-height: 1.45;
+  color: var(--foreground);
   background-color: var(--secondary);
   border-radius: 6px;
 }
@@ -239,6 +241,7 @@
   padding: 0;
   margin: 0;
   font-size: 100%;
+  color: inherit;
   background-color: transparent;
   border-radius: 0;
 }
