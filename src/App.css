@@ -192,15 +192,15 @@
 }
 
 .tiptap li {
-  margin-top: 0.25em;
+  margin-top: 0;
 }
 
 .tiptap li + li {
-  margin-top: 0.25em;
+  margin-top: 0;
 }
 
 .tiptap li > p {
-  margin-top: 1em;
+  margin-top: 0.25em;
 }
 
 .tiptap li > p:first-child {
