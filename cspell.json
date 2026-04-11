@@ -40,6 +40,8 @@
     "turndown",
     "cmark",
     "tasklists",
-    "keymap"
+    "keymap",
+    "marked",
+    "tiptap"
   ]
 }
