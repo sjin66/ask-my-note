@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
@@ -128,4 +129,61 @@
   html {
     @apply font-sans;
   }
+}
+
+/* Tiptap rich text editor styles */
+.tiptap {
+  outline: none;
+}
+
+.tiptap h1 {
+  @apply text-2xl leading-tight font-semibold;
+}
+
+.tiptap h2 {
+  @apply text-xl leading-tight font-semibold;
+}
+
+.tiptap h3 {
+  @apply text-base leading-tight font-semibold;
+}
+
+.tiptap p {
+  @apply mb-2 leading-relaxed;
+}
+
+.tiptap ul {
+  @apply my-1.5 list-disc space-y-1 pl-4;
+}
+
+.tiptap ol {
+  @apply my-1.5 list-decimal space-y-1 pl-4;
+}
+
+.tiptap blockquote {
+  @apply border-muted-foreground/30 text-muted-foreground my-2 border-l-2 pl-3 italic;
+}
+
+.tiptap code {
+  @apply bg-secondary text-foreground rounded px-1.5 py-0.5 font-mono text-xs;
+}
+
+.tiptap pre {
+  @apply bg-secondary/50 my-2 overflow-x-auto rounded-lg p-3 text-xs;
+}
+
+.tiptap pre code {
+  @apply bg-transparent p-0 text-xs;
+}
+
+.tiptap hr {
+  @apply border-border my-3;
+}
+
+.tiptap strong {
+  @apply font-semibold;
+}
+
+.tiptap a {
+  @apply text-primary hover:text-primary/80 underline;
 }
